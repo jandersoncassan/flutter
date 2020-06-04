@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:carros/models/usuario.dart';
+import 'package:carros/services/response_api.dart';
 import 'package:http/http.dart' as http;
 
-import 'api_response.dart';
 
 class LoginApi {
-  static Future<ApiResponse<Usuario>> login(String login, String senha) async {
+  static Future<ResponseApi<Usuario>> login(String login, String senha) async {
     try {
       // var url = 'http://livrowebservices.com.br/rest/login';
       var url = 'http://carros-springboot.herokuapp.com/api/v2/login';
@@ -48,14 +48,14 @@ class LoginApi {
         Usuario user = Usuario.fromJson(paramsResponseJson);
         //salvamos no shared preferences
         user.save();
-        return ApiResponse.ok(user);
+        return ResponseApi.ok(user);
       }
 
-      return ApiResponse.error(paramsResponseJson['error']);
+      return ResponseApi.error(paramsResponseJson['error']);
       
     } catch (error, exception) {
       print('Erro ao tentar efetuar o login error >> $error , Exception >> $exception');
-      return ApiResponse.error(
+      return ResponseApi.error(
           'Ocorreu um erro ao tentar efetuar o login, contate o administrador ..');
     }
   }

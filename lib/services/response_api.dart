@@ -1,14 +1,14 @@
-class ApiResponse<T> {
+class ResponseApi<T> {
 
   bool isValid;
   String message;
   T result;
 
-  ApiResponse.ok(this.result){
+  ResponseApi.ok(this.result){
     this.isValid = true;
   }
 
-  ApiResponse.error(this.message){
+  ResponseApi.error(this.message){
     this.isValid = false;
   }
 }

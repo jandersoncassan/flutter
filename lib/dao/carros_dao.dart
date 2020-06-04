@@ -1,5 +1,6 @@
 import 'package:carros/models/carro.dart';
-import 'package:carros/pages/favoritos/base_dao.dart';
+
+import 'base_dao.dart';
 
 class CarrosDAO extends BaseDAO <Carro>{
   

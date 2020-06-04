@@ -1,9 +1,7 @@
-import 'dart:async';
-
 import 'package:carros/bloc/login_bloc.dart';
-import 'package:carros/services/api_response.dart';
 import 'package:carros/models/usuario.dart';
 import 'package:carros/pages/home_page.dart';
+import 'package:carros/services/response_api.dart';
 import 'package:carros/utils/alert.dart';
 import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/app_button.dart';
@@ -118,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
     //setShowProgress(true);
    // _streamController.add(true);
 
-     ApiResponse<Usuario> response = await _bloc.fetch(email, password);
+     ResponseApi<Usuario> response = await _bloc.fetch(email, password);
 
    // ApiResponse<Usuario> response = await LoginApi.login(email, password);
     if (response.isValid) {
