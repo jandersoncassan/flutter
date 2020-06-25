@@ -19,6 +19,13 @@ abstract class BaseDAO< T extends Entity> {
     return id;
   }
 
+ Future<List<T>> query(String sql, [List<dynamic> arguments]) async {
+    final dbClient = await db;
+
+    final list = await dbClient.rawQuery(sql, arguments);
+    return list.map<T>((json) => fromJson(json)).toList();
+  }
+  
   Future<List<T>> findAll() async {
     final dbClient = await db;
 
@@ -59,4 +66,6 @@ abstract class BaseDAO< T extends Entity> {
     var dbClient = await db;
     return await dbClient.rawDelete('delete from $tableName');
   }
+
+ 
 }

@@ -1,5 +1,7 @@
 
 import 'entity.dart';
+import 'dart:convert' as convert;
+
 
 class Carro extends Entity{
   int id;
@@ -45,5 +47,8 @@ class Carro extends Entity{
     return data;
   }
 
-   
+   String toJson() {
+    String json = convert.json.encode(toMap());
+    return json;
+  }
 }

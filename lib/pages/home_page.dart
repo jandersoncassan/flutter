@@ -1,5 +1,7 @@
-import 'package:carros/utils/prefs.dart';
-import 'package:carros/widgets/carros_listview.dart';
+import 'package:carros/pages/carro_form_page.dart';
+import 'package:carros/utils/alert.dart';
+import 'package:carros/utils/nav.dart';
+import 'package:carros/widgets/favoritos_page.dart';
 import 'package:carros/widgets/carros_page.dart';
 import 'package:carros/widgets/drawer_list.dart';
 import 'package:flutter/material.dart';
@@ -37,9 +39,9 @@ class _HomePageState extends State<HomePage>
   }
 
   _initTabs() async {
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     //var index = await Prefs.getInt('tabIdx');
-   // this._tabController.index = index;
+    // this._tabController.index = index;
 
     // this._tabController.addListener(() {
     //   //salvamos o indice da ultima TAB que o usuario acessou
@@ -56,9 +58,22 @@ class _HomePageState extends State<HomePage>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(text: 'Classicos'),
-            Tab(text: 'Esportivos'),
-            Tab(text: 'Luxo')
+            Tab(
+              text: 'Classicos',
+              icon: Icon(Icons.directions_car),
+            ),
+            Tab(
+              text: 'Esportivos',
+              icon: Icon(Icons.directions_car),
+            ),
+            Tab(
+              text: 'Luxo',
+              icon: Icon(Icons.directions_car),
+            ),
+            Tab(
+              text: 'Favoritos',
+              icon: Icon(Icons.favorite),
+            )
           ],
         ),
       ),
@@ -68,9 +83,18 @@ class _HomePageState extends State<HomePage>
           CarrosPage('classicos'),
           CarrosPage('esportivos'),
           CarrosPage('luxo'),
+          FavoritosPage(),
         ],
       ),
       drawer: DrawerList(),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: _onClickAdicionarCarro,
+      ),
     );
+  }
+
+  void _onClickAdicionarCarro() {
+    push(context, CarroFormPage());
   }
 }

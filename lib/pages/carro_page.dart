@@ -1,7 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carros/bloc/loripsum_bloc.dart';
 import 'package:carros/models/carro.dart';
+import 'package:carros/pages/carro_form_page.dart';
+import 'package:carros/services/carro_api.dart';
 import 'package:carros/services/favorito_service.dart';
+import 'package:carros/services/response_api.dart';
+import 'package:carros/utils/alert.dart';
+import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/text.dart';
 import 'package:flutter/material.dart';
 
@@ -16,12 +21,21 @@ class CarroPage extends StatefulWidget {
 class _CarroPageState extends State<CarroPage> {
   final _bloc = LoripsumBloc();
 
+  Color color = Colors.grey;
+
   Carro get carro => widget.carro;
 
   @override
   void initState() {
+    //metodo utilizado para inicializacao do nosso widget
     super.initState();
     _bloc.fetch();
+
+    FavoritoService.isFavorito(carro).then((favorito) {
+      setState(() {
+        color = favorito ? Colors.red : Colors.grey;
+      });
+    });
   }
 
   @override
@@ -59,7 +73,10 @@ class _CarroPageState extends State<CarroPage> {
       padding: EdgeInsets.all(16),
       child: ListView(
         children: <Widget>[
-          CachedNetworkImage(imageUrl: widget.carro.urlFoto),
+          CachedNetworkImage(
+            imageUrl: widget.carro.urlFoto ??
+                "https://s3-sa-east-1.amazonaws.com/videos.livetouchdev.com.br/esportivos/Ferrari_FF.png",
+          ),
           _bloco1(),
           Divider(),
           _bloco2(),
@@ -86,7 +103,7 @@ class _CarroPageState extends State<CarroPage> {
             IconButton(
               icon: Icon(
                 Icons.favorite,
-                color: Colors.red,
+                color: color,
                 size: 30,
               ),
               onPressed: _onClikFavorito,
@@ -133,10 +150,15 @@ class _CarroPageState extends State<CarroPage> {
   _onClickPopupMenu(String value) {
     switch (value) {
       case 'Editar':
-        print('Editar');
+        push(
+          context,
+          CarroFormPage(
+            carro: carro,
+          ),
+        );
         break;
       case 'Deletar':
-        print('Deletar');
+        deletar();
         break;
       case 'Shared':
         print('Shared');
@@ -146,7 +168,25 @@ class _CarroPageState extends State<CarroPage> {
 
   void _onClikFavorito() async {
     print('Favorito ${carro.id}');
-    FavoritoService.favoritarCarros(carro);
+    bool favorito = await FavoritoService.favoritarCarros(context, carro);
+    setState(() {
+      color = favorito ? Colors.red : Colors.grey;
+    });
+  }
+
+  void deletar() async{
+      ResponseApi<Map> response = await CarroApi.delete(carro);
+
+    //await Future.delayed(Duration(seconds: 3));
+
+    if(response.isValid){
+      alert(context, response.result["msg"], callback: (){
+        pop(context);
+      });
+    }else{
+      alert(context, response.message);
+    }
+
   }
 
   @override
