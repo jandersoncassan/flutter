@@ -9,6 +9,17 @@ import 'package:carros/utils/alert.dart';
 import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/text.dart';
 import 'package:flutter/material.dart';
+import 'package:carros/utils/event_bus.dart';
+
+
+class CarroEvent extends Event{
+  // salvar, excluir, editar ...
+  String acao;
+  //esportivos, classicos, luxo ...
+  String tipo;
+
+  CarroEvent(this.acao, this.tipo);
+}
 
 class CarroPage extends StatefulWidget {
   Carro carro;
@@ -181,6 +192,7 @@ class _CarroPageState extends State<CarroPage> {
 
     if(response.isValid){
       alert(context, response.result["msg"], callback: (){
+         EventBus.get(context).sendEvents(CarroEvent('deletar', carro.tipo));
         pop(context);
       });
     }else{

@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:carros/bloc/carros_bloc.dart';
 import 'package:carros/models/carro.dart';
 import 'package:carros/pages/carro_page.dart';
 import 'package:carros/services/carro_api.dart';
+import 'package:carros/utils/event_bus.dart';
 import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/carros_listview.dart';
 import 'package:carros/widgets/text_error.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:carros/pages/carro_page.dart';
 
 //* PARA GUARDAR O ESTADO DAS TABS E NAO IR TODA CLICK NO WEBSERVICE, PRECISAMOS DE STATEFULL E UTILIZAR with AutomaticKeepAliveClientMixin tipando com a classe
 //@override
@@ -23,6 +28,8 @@ class _CarrosPageState extends State<CarrosPage>
     with AutomaticKeepAliveClientMixin<CarrosPage> {
   final _bloc = CarrosBloc();
   String get tipo => widget.tipo;
+
+  StreamSubscription _subscription;
 
   //List<Carro> carros;
 
@@ -53,6 +60,14 @@ class _CarrosPageState extends State<CarrosPage>
 
     //UTILIZANDO O PADRAO BLOC
     _fetch(tipo);
+    final bus = EventBus.get(context);
+   // final bus = Provider.of<EventBus>(context, listen: false);  2° foram de usar
+    _subscription = bus.stream.listen((event) { 
+      CarroEvent carroEvent = event;
+        print('Evento ${carroEvent.tipo} - ${carroEvent.acao}');
+        if(carroEvent.tipo == tipo)
+          _bloc.fetch(tipo);
+    });
   }
 
   _fetch(tipo) {
@@ -120,6 +135,7 @@ Future<void> _onRefresh() {
   void dispose() {
     super.dispose();
     _bloc.dispose();
+    _subscription.cancel();
     print('>>>>>> DISPOSE !!! ');
   }
 

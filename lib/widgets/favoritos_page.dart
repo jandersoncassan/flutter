@@ -5,6 +5,7 @@ import 'package:carros/widgets/carros_listview.dart';
 import 'package:carros/widgets/text_error.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:carros/models/favoritos_model.dart';
 
 //* PARA GUARDAR O ESTADO DAS TABS E NAO IR TODA CLICK NO WEBSERVICE, PRECISAMOS DE STATEFULL E UTILIZAR with AutomaticKeepAliveClientMixin tipando com a classe
 //@override
@@ -49,8 +50,12 @@ class _FavoritosPageState extends State<FavoritosPage>
   }
 
   _fetch() {
-    FavoritosBloc favoritosBloc = Provider.of<FavoritosBloc>(context, listen: false); //qdo não precisamos ficar escutando o model
-    favoritosBloc.fetch();
+    // FavoritosBloc favoritosBloc = Provider.of<FavoritosBloc>(context, listen: false); //qdo não precisamos ficar escutando o model
+    // favoritosBloc.fetch();
+
+    FavoritosModel favoritosModel = Provider.of<FavoritosModel>(context,
+        listen: false); //recuperando o objeto
+    favoritosModel.getCarros();
   }
 
   // void _loadData() async {
@@ -78,36 +83,57 @@ class _FavoritosPageState extends State<FavoritosPage>
 
     //FORMA03
     //return FutureBuilder(
-    FavoritosBloc favoritosBloc = Provider.of<FavoritosBloc>(context);
-    return StreamBuilder(
-        stream: favoritosBloc.stream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            print('Error : ${snapshot.error}');
-            return TextError(
-              message:
-                  'Ocorreu um erro ao carregar as fotos \n\n Tentar novamente',
-              onpressed: _fetch(),
-            );
-          }
-          if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          List<Carro> carros = snapshot.data;
-          return RefreshIndicator(
-            //UTILIZADO PARA DAR UM REFRESH NA TELA
-            onRefresh: _onRefresh,
-            child: CarrosListView(carros),
-          );
-        });
+    //FavoritosBloc favoritosBloc = Provider.of<FavoritosBloc>(context);
+    FavoritosModel favoritosModel = Provider.of<FavoritosModel>(
+        context); //sem listen : false, pq ele precisa ficar ouvindo
+    List<Carro> carros = favoritosModel.carros;
+
+    if (carros.isEmpty) {
+      return Center(
+        child: Text(
+          'Nenhum carro no favoritos!',
+          style: TextStyle(fontSize: 20),
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      //UTILIZADO PARA DAR UM REFRESH NA TELA
+      onRefresh: _onRefresh,
+      child: CarrosListView(carros),
+    );
+
+    // return StreamBuilder(  //COM STREAMBUIDER
+    //     stream: favoritosBloc.stream,
+    //     builder: (context, snapshot) {
+    //       if (snapshot.hasError) {
+    //         print('Error : ${snapshot.error}');
+    //         return TextError(
+    //           message:
+    //               'Ocorreu um erro ao carregar as fotos \n\n Tentar novamente',
+    //           onpressed: _fetch(),
+    //         );
+    //       }
+    //       if (!snapshot.hasData) {
+    //         return Center(
+    //           child: CircularProgressIndicator(),
+    //         );
+    //       }
+    //       List<Carro> carros = snapshot.data;
+    //       return RefreshIndicator(
+    //         //UTILIZADO PARA DAR UM REFRESH NA TELA
+    //         onRefresh: _onRefresh,
+    //         child: CarrosListView(carros),
+    //       );
+    //     });
   }
 
   Future<void> _onRefresh() {
     // return Future.delayed(Duration(seconds: 3), ()=>{ TESTE
     //   print('doido')
     // });
-    return Provider.of<FavoritosBloc>(context).fetch();
+   // return Provider.of<FavoritosBloc>(context).fetch();
+      //FavoritosBloc favoritosBloc = Provider.of<FavoritosBloc>(context);
+    Provider.of<FavoritosModel>(context, listen: false).getCarros();
   }
 }

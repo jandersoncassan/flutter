@@ -4,6 +4,7 @@ import 'package:carros/dao/favoritos_dao.dart';
 import 'package:carros/models/carro.dart';
 import 'package:carros/models/favorito.dart';
 import 'package:provider/provider.dart';
+import 'package:carros/models/favoritos_model.dart';
 
 //import '../main.dart';
 
@@ -20,14 +21,16 @@ class FavoritoService {
       print('Favorito delete id ${carro.id}');
       dao.delete(carro.id);
      // favoritosBloc.fetch();
-     Provider.of<FavoritosBloc>(context).fetch();
+     //Provider.of<FavoritosBloc>(context).fetch();
+     Provider.of<FavoritosModel>(context, listen: false).getCarros();
 
       return false;
     }else{
        print('Favorito insert id ${carro.id}');
       dao.save(favorito);
      // favoritosBloc.fetch();
-      Provider.of<FavoritosBloc>(context).fetch();
+     // Provider.of<FavoritosBloc>(context).fetch();
+     Provider.of<FavoritosModel>(context, listen: false).getCarros();
       return true;
     }
   }

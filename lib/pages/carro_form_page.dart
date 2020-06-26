@@ -9,6 +9,8 @@ import 'package:carros/utils/nav.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:carros/utils/event_bus.dart';
+import 'package:carros/pages/carro_page.dart';
 
 class CarroFormPage extends StatefulWidget {
   final Carro carro;
@@ -262,6 +264,7 @@ class _CarroFormPageState extends State<CarroFormPage> {
 
     if (response.isValid) {
       alert(context, 'Carro salvo com sucesso', callback: () {
+        EventBus.get(context).sendEvents(CarroEvent('salvar', c.tipo));
         pop(context);
       });
     } else {

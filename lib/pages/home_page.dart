@@ -36,6 +36,8 @@ class _HomePageState extends State<HomePage>
     //Uma outra forma de buscar o valor sem precisar utilizar a function then() fo Future, é efetuar a busca utilizando o async / await,
     //mas nesse caso precisamos criar um metodo separado, pq não podemos utilizar async/await dentro do mtodo initState()!!
     _initTabs();
+
+    //Escutando uma stream
   }
 
   _initTabs() async {
